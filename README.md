@@ -1,25 +1,28 @@
-# platform-landkrabba
+# platform-marie
 
 A sensor platform consisting of:
 
-- 1x Navico radar 24
-- 1x Ouster lidar (OS2)
 - 1x AXIS camera (P1375-E)
+- 1x Navico radar 24
+- 1x GPS
+- 1x Heading sensor
 
-The sensors are interfaced to a [crowsnest](https://github.com/MO-RISE/crowsnest) data bus:
+The sensors are interfaced to a [keelson](https://github.com/MO-RISE/keelson) data bus:
 
-- Navico radar -> OpenDLV/libcluon -> crowsnest
-- Ouster lidar -> crowsnest
-- Axis cameras -> crowsnest
+- AXIS camera -> frames -> keelson
+              -> webrtc
+- Navico radar -> OpenDLV/libcluon -> keelson
+- GPS -> NMEA -> keelson
+- Heading sensor -> NMEA -> keelson
+
 
 ## Network setup
 
 Connected as:
 
-- Ethernet port 1 <-> Navico radar 25
-- Ethernet port 2 <-> Ouster lidar (OS2)
-- Ethernet port 3 <-> AXIS camera (10.10.70.2)
-- Ethernet port 6 <-> 4G router (192.168.1.1)
+- Ethernet port 1 <-> AXIS camera (10.10.70.2)
+- Ethernet port 2 <-> Navico Radar 24
+- Ethernet port 6 <-> Internet (4G router)
 - USB ports <-> NA
 - USB ports <-> NA
 
@@ -28,7 +31,6 @@ Connected as:
 
 - `ethtool enp1s0` should show --> Link detected: yes
 - `ethtool enp2s0` should show --> Link detected: yes
-- `ethtool enp3s0` should show --> Link detected: yes
 - `ping 10.10.10.2` should work
 - `ip route show` should show a 236.6.7.0/24 route to enp1s0
 - `ip route show` should show a 10.10.10.2 route to enp3s0
