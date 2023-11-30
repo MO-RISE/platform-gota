@@ -1,0 +1,59 @@
+version: '3'
+services:
+
+  source_n2k:
+    image: ghcr.io/mo-rise/porla:v0.3.0
+    network_mode: host
+    restart: always
+    command:
+      [
+        "socat UDP4-RECV:1457,reuseaddr STDOUT | timestamp --rfc3339 | to_bus 1"
+      ]
+
+  source_nmea0183:
+    image: ghcr.io/mo-rise/porla:v0.3.0
+    network_mode: host
+    restart: always
+    command:
+      [
+        "socat TCP4-CONNECT:192.168.4.1:1456,reuseaddr STDOUT | timestamp --rfc3339 | to_bus 2"
+      ]
+
+  # Raw publishers
+  raw-pub-nmea2000:
+    image: ghcr.io/mo-rise/porla-keelson:v0.1.0-pre.2
+    restart: always
+    network_mode: "host"
+    command:
+      [
+        "from_bus 1 | jsonify '{timestamp} {value}' | shuffle '{payload_pb2js}' 'rise/gota/porla/yden/nmea2000_yden/1457 {payload_pb2js}' | brefv encode '{topic} {payload_pb2js}' '{topic} {envelope}' | zenoh put --base64 --line '{key} {message}'"
+      ]
+
+  raw-pub-nmea0183:
+    image: ghcr.io/mo-rise/porla-keelson:v0.1.0-pre.2
+    restart: always
+    network_mode: "host"
+    command:
+      [
+        "from_bus 2 | jsonify '{timestamp} {value}' | shuffle '{payload_pb2js}' 'rise/gota/porla/yden/nmea0183/1456 {payload_pb2js}' | brefv encode '{topic} {payload_pb2js}' '{topic} {envelope}' | zenoh put --base64 --line '{key} {message}'"
+      ]
+
+  # Parsing the N2K data
+  to_canboat:
+    image: ghcr.io/mo-rise/porla-nmea:v0.2.0
+    network_mode: host
+    restart: always
+    command:
+      [
+        "from_bus 1 | shuffle '{} {data}' '{data}' | analyzer -json | timestamp --rfc3339 | to_bus 11"
+      ]
+
+  # Publishing parsed json
+  json-pub-nmea2000:
+    image: ghcr.io/mo-rise/porla-keelson:v0.1.0-pre.2
+    restart: always
+    network_mode: "host"
+    command:
+      [
+        "from_bus 11 | jsonify '{timestamp} {value}' | shuffle '{payload_raw}' 'rise/gota/porla/yden/nmea2000_json/1457 {payload_raw}' | brefv encode '{topic} {payload_raw}' '{topic} {envelope}' | zenoh put --base64 --line '{key} {message}'"
+      ]

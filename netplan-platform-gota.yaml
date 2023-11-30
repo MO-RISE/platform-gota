@@ -4,7 +4,7 @@ network:
     ethernets:
         enp1s0:
             addresses:
-             - 10.10.7.1/24
+             - 10.10.7.1/24  # For access to AXIS camera at 10.10.7.61
             dhcp4: no
         enp2s0:
             addresses:
@@ -16,6 +16,7 @@ network:
         enp3s0:
             addresses:
              - 10.10.30.1/24
+             - 192.168.4.0/24  # For access to YDEN gateway at 192.168.4.1
             dhcp4: no
         enp4s0:
             addresses:
