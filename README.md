@@ -1,4 +1,4 @@
-# platform-gota
+# Platform-gota (TEST EDIT)
 
 A sensor platform consisting of:
 
