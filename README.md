@@ -1,4 +1,4 @@
-# platform-gota
+# Platform-gota (TEST EDIT)
 
 A sensor platform consisting of:
 
@@ -6,6 +6,9 @@ A sensor platform consisting of:
 - 1x Navico radar 24
 - 1x GPS
 - 1x Heading sensor
+- 1x SDR (AIS)
+- 1x RUTX12 (PonyHouse & NMEA enabled 10.10.7.88)
+
 
 The sensors are interfaced to a [keelson](https://github.com/MO-RISE/keelson) data bus:
 
@@ -13,16 +16,19 @@ The sensors are interfaced to a [keelson](https://github.com/MO-RISE/keelson) da
 - Navico radar -> OpenDLV/libcluon -> keelson
 - GPS -> NMEA -> keelson
 - Heading sensor -> NMEA -> keelson
-
+- SDR --> 
 
 ## Network setup
 
 Connected as:
 
-- Ethernet port 1 <-> AXIS camera (10.10.7.61)
+- Ethernet port 1 <->   
+  - POE SWITCH 
+    - AXIS camera (10.10.7.61)
+    - RUTX12 (NMEA 10.10.7.88) 
 - Ethernet port 2 <-> Navico Radar 24
 - Ethernet port 3 <-> YDEN N2K Gateway
-- Ethernet port 6 <-> Internet (4G router)
+- Ethernet port 6 <-> Eriks L450 (4G router)
 
 
 **Checks:**
