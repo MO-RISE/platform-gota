@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  point-rotation-0:
+    image: ghcr.io/mo-rise/crowsnest-connector-point-rotation:0.0.10
+    restart: unless-stopped
+    container_name: cw-point-rot-radar-0
+    network_mode: "host"
+    environment:
+      - MQTT_CLIENT_ID=pro-point-rot-0
+      - MQTT_BROKER_HOST=localhost
+      - MQTT_BROKER_PORT=1883
+      - MQTT_TOPIC_IN_RADAR_SWEEP=CROWSNEST/GOTA/RADAR/0/SWEEP
+      - MQTT_TOPIC_IN_LIDAR_SWEEP=CROWSNEST/GOTA/LIDAR/2/POINTCLOUD
+      - MQTT_TOPIC_IN_HEADING=CROWSNEST/GOTA/GNSS/0/JSON
+      - MQTT_TOPIC_OUT_RADAR_NORTHUP=CROWSNEST/GOTA/RADAR/0/NUP
+      - MQTT_TOPIC_OUT_LIDAR_NORTHUP=CROWSNEST/GOTA/LIDAR/2/NUP
+      - CORR_HEADING=0 # Degrees (int)
+
+  point-rotation-1:
+    image: ghcr.io/mo-rise/crowsnest-connector-point-rotation:0.0.10
+    restart: unless-stopped
+    container_name: cw-point-rot-radar-1
+    network_mode: "host"
+    environment:
+      - MQTT_CLIENT_ID=pro-point-rotation-1
+      - MQTT_BROKER_HOST=localhost
+      - MQTT_BROKER_PORT=1883
+      - MQTT_TOPIC_IN_RADAR_SWEEP=CROWSNEST/GOTA/RADAR/1/SWEEP
+      - MQTT_TOPIC_IN_LIDAR_SWEEP=CROWSNEST/GOTA/LIDAR/1/POINTCLOUD
+      - MQTT_TOPIC_IN_HEADING=CROWSNEST/GOTA/GNSS/0/JSON
+      - MQTT_TOPIC_OUT_RADAR_NORTHUP=CROWSNEST/GOTA/RADAR/1/NUP
+      - MQTT_TOPIC_OUT_LIDAR_NORTHUP=CROWSNEST/GOTA/LIDAR/1/NUP
+      - CORR_HEADING=0 # Degrees (int)
+
