@@ -17,7 +17,7 @@ services:
     network_mode: host
     command:
       [
-        "rtsp to_frames -r rise -e gota -i sealog-4 -s axis -u rtsp://localhost:8554/axis"
+        "rtsp to_frames -r rise -e gota -i sealog-3 --compress jpeg -s axis -u rtsp://localhost:8554/axis"
       ]
 
   # Setting up a proxy for WHEP signalling over Zenoh for remote access to live streams.
@@ -27,5 +27,5 @@ services:
     network_mode: host
     command:
       [
-        "whep-proxy -r rise -e gota -i sealog-4 -m http://localhost:8889"
+        "whep-proxy -r rise -e gota -i sealog-3 -m http://localhost:8889"
       ]
