@@ -23,8 +23,10 @@ network:
              - 10.10.40.1/24
             dhcp4: no
         enp5s0:
-            addresses:
-             - 10.10.50.1/24
-            dhcp4: no
+            dhcp4: yes
+            dhcp4-overrides:
+                route-metric: 2
         enp6s0:
             dhcp4: yes
+            dhcp4-overrides:
+                route-metric: 1

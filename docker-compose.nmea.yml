@@ -48,8 +48,17 @@ services:
         "from_bus 1 | shuffle '{} {data}' '{data}' | analyzer -json | jq --unbuffered -jrc '\"rise/gota/porla/yden/nmea2000_json/\",.pgn, \" \", . + {timestamp: (now | todateiso8601)}, \"\\n\"' | to_bus 11"
       ]
 
+  recorder_n2k_raw:
+    image: ghcr.io/mo-rise/porla:v0.3.0
+    network_mode: host
+    restart: always
+    volumes:
+      - ${LOG_LOCATION}:/recordings
+    working_dir: /recordings
+    command: [ "from_bus 1 | record n2k_raw.log" ]
+
   # Publishing parsed json
-  json-pub-nmea2000:
+  json-pub-n2k:
     image: ghcr.io/mo-rise/porla-keelson:v0.1.0-pre.5
     restart: always
     network_mode: "host"
@@ -57,3 +66,12 @@ services:
       [
         "from_bus 11 | brefv encode '{topic} {payload_raw}' '{topic} {envelope}' | zenoh put --base64 --line '{key} {message}'"
       ]
+
+  recorder_n2k_json:
+    image: ghcr.io/mo-rise/porla:v0.3.0
+    network_mode: host
+    restart: always
+    volumes:
+      - ${LOG_LOCATION}:/recordings
+    working_dir: /recordings
+    command: [ "from_bus 11 | record n2k_canboat.log" ]

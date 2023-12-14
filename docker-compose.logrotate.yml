@@ -1,0 +1,11 @@
+version: '3'
+services:
+
+  logrotate:
+    build: https://github.com/linkyard/docker-logrotate.git
+    restart: always
+    environment:
+      - LOGROTATE_CRON=0 0 * * *
+    volumes:
+      - ${LOG_LOCATION}:/logs
+      - ./logrotate.conf:/etc/logrotate.conf

@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+
+  SDR-RTL-AIS:
+    image: ghcr.io/bklofas/rtl-ais:latest
+    restart: always
+    network_mode: "host"
+    devices:
+      - "/dev/bus/usb"
+    command: "./rtl_ais -d 0 -h 127.0.0.1 -P 10110"
+
+  source_ais:
+    image: ghcr.io/mo-rise/porla:v0.3.0
+    network_mode: host
+    restart: always
+    command:
+      [
+        "socat -u UDP4-RECV:10110,reuseaddr STDOUT | timestamp --rfc3339 | to_bus 3"
+      ]
+
+  recorder_n2k_raw:
+    image: ghcr.io/mo-rise/porla:v0.3.0
+    network_mode: host
+    restart: always
+    volumes:
+      - ${LOG_LOCATION}:/recordings
+    working_dir: /recordings
+    command: [ "from_bus 3 | record ais_raw.log" ]
+
+  pub-ais:
+    image: ghcr.io/mo-rise/porla-keelson:v0.1.0-pre.5
+    restart: always
+    network_mode: "host"
+    command:
+      [
+        "from_bus 3 | b64 --encode '{timestamp} {input}' '{timestamp} {output}' | jsonify '{timestamp} {value}' | shuffle '{payload_pb2js}' 'rise/gota/porla/rtl/nmea0183/ais {payload_pb2js}' | brefv encode '{topic} {payload_pb2js}' '{topic} {envelope}' | zenoh put --base64 --line '{key} {message}'"
+      ]
