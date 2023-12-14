@@ -25,8 +25,8 @@ network:
         enp5s0:
             dhcp4: yes
             dhcp4-overrides:
-                route-metric: 2
+                route-metric: 2  # Prioritize 4G router above LTE-450 router
         enp6s0:
             dhcp4: yes
             dhcp4-overrides:
-                route-metric: 1
+                route-metric: 1  # Prioritize 4G router above LTE-450 router

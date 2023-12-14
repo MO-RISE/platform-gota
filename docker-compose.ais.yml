@@ -19,7 +19,7 @@ services:
         "socat -u UDP4-RECV:10110,reuseaddr STDOUT | timestamp --rfc3339 | to_bus 3"
       ]
 
-  recorder_n2k_raw:
+  recorder_ais:
     image: ghcr.io/mo-rise/porla:v0.3.0
     network_mode: host
     restart: always
