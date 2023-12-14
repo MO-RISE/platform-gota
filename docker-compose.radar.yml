@@ -75,8 +75,6 @@ services:
       # Radial subsetting (1=every spoke element, 2=50% of spoke elements...)
       - RADAR_SWEEP_RADIAL_SUBSETTING=4
 
-
-
   crowsnest-processor-radar-1:
     image: ghcr.io/mo-rise/crowsnest-processor-opendlv-radar:0.1.18
     container_name: cw-radar-processor-1
@@ -105,3 +103,9 @@ services:
       - RADAR_SWEEP_ANGULAR_SUBSETTING=4
       # Radial subsetting (1=every spoke element, 2=50% of spoke elements...)
       - RADAR_SWEEP_RADIAL_SUBSETTING=4
+
+  keelson-opendlv2radar:
+    image: ghcr.io/mo-rise/keelson:0.1.0-pre.16
+    network_mode: host
+    restart: always
+    command: [ "opendlv2radar -r rise -e gota -i navico --cid 112" ]
