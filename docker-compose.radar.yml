@@ -7,4 +7,101 @@ services:
     container_name: cw-radar
     restart: unless-stopped
     network_mode: "host"
-    command: " --cid=112 --ip=236.6.7.5 --port=6878 --antenna_height=3 --bearing_alignment=345 --id=1201 --id_bravo=1202 --gain=36 --gain_bravo=50 --interference_rejection=1 --interference_rejection_bravo=1 --local_interference_rejection=1 --local_interference_rejection_bravo=1 --noise_rejection=1 --noise_rejection_bravo=1 --transmit_lock=0 --rain_clutter=0 --rain_clutter_bravo=0 --range=500 --range_bravo=5000 --scan_speed=3 --scan_speed_bravo=3 --sea_clutter=0 --sea_clutter_bravo=0 --side_lobe_suppression=0 --side_lobe_suppression_bravo=0 --target_boost=0 --target_boost_bravo=0 --sea_state=1 --sea_state_bravo=1 --target_expansion=0 --target_expansion_bravo=0 --target_separation=0 --target_separation_bravo=0 --doppler=0 --doppler_bravo=0 "
+    command: 
+      "
+      --cid=112 --ip=236.6.7.5 --port=6878 --antenna_height=5 --bearing_alignment=0 --transmit_lock=0
+      
+      --id=1201 
+      --gain=36 
+      --interference_rejection=1 
+      --local_interference_rejection=1 
+      --noise_rejection=1 
+      --transmit_lock=0 
+      --rain_clutter=0 
+      --range=500 
+      --scan_speed=3 
+      --sea_clutter=0 
+      --sea_state=1 
+      --doppler=0 
+      --side_lobe_suppression=0 
+      --target_boost=0 
+      --target_expansion=0 
+      --target_separation=0 
+
+      --id_bravo=1202 
+      --gain_bravo=50
+      --interference_rejection_bravo=1 
+      --local_interference_rejection_bravo=1 
+      --noise_rejection_bravo=1 
+      --rain_clutter_bravo=0 
+      --range_bravo=5000 
+      --scan_speed_bravo=3 
+      --sea_clutter_bravo=0 
+      --side_lobe_suppression_bravo=0 
+      --target_boost_bravo=0 
+      --sea_state_bravo=1 
+      --target_expansion_bravo=0 
+      --target_separation_bravo=0 
+      --doppler_bravo=0 
+      "
+
+
+  crowsnest-processor-radar-0:
+    image: ghcr.io/mo-rise/crowsnest-processor-opendlv-radar:0.1.18
+    container_name: cw-radar-processor-0
+    restart: unless-stopped
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    environment:
+      # Session ID 
+      - CLUON_CID=112
+      # Radar outputs two images diffrensiated by ID (Deafult: 1201 & 1202)
+      - CLUON_ENVELOPE_ID=1201
+
+      # Pushing radar sweep to MQTT 
+      - MQTT_BROKER_HOST=localhost
+      - MQTT_BROKER_PORT=1883
+      - MQTT_BASE_TOPIC=CROWSNEST/GOTA/RADAR/0/SWEEP 
+
+      # Filtering clouon input messages (1=every spoke, 2=50% of spokes...)
+      - RADAR_INPUT_SLICE=2
+      # Radar return filter by signal return strength 
+      - RADAR_MIN_READING_WEIGHT=0
+      # Angular subsetting (1=every spoke, 2=50% of spokes...)
+      - RADAR_SWEEP_ANGULAR_SUBSETTING=4
+      # Radial subsetting (1=every spoke element, 2=50% of spoke elements...)
+      - RADAR_SWEEP_RADIAL_SUBSETTING=4
+
+
+
+  crowsnest-processor-radar-1:
+    image: ghcr.io/mo-rise/crowsnest-processor-opendlv-radar:0.1.18
+    container_name: cw-radar-processor-1
+    restart: unless-stopped
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    environment:
+      # Session ID 
+      - CLUON_CID=112
+      # Radar outputs two images diffrensiated by ID (Deafult: 1201 & 1202)
+      - CLUON_ENVELOPE_ID=1202
+
+      # Pushing radar sweep to MQTT 
+      - MQTT_BROKER_HOST=localhost
+      - MQTT_BROKER_PORT=1883
+      - MQTT_BASE_TOPIC=CROWSNEST/GOTA/RADAR/1/SWEEP 
+
+      # Filtering clouon input messages (1=every spoke, 2=50% of spokes...)
+      - RADAR_INPUT_SLICE=2
+      # Radar return filter by signal return strength 
+      - RADAR_MIN_READING_WEIGHT=0
+      # Angular subsetting (1=every spoke, 2=50% of spokes...)
+      - RADAR_SWEEP_ANGULAR_SUBSETTING=4
+      # Radial subsetting (1=every spoke element, 2=50% of spoke elements...)
+      - RADAR_SWEEP_RADIAL_SUBSETTING=4
